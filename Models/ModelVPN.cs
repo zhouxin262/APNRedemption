@@ -39,23 +39,44 @@ namespace Models
 
         public void save()
         {
-            string updateSql = "UPDATE VPN SET vpn_name=@vpn_name, source=@source, destination=@destination, " +
-                    "ipaddress=@ipaddress, route=@route,source1=@source1, destination1=@destination1, " +
-                    "ipaddress1=@ipaddress1, route1=@route1, [memo]=@memo WHERE id=@id";
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.CommandText = updateSql;
-            cmd.Parameters.AddWithValue("@vpn_name", this.vpn_name);
-            cmd.Parameters.AddWithValue("@source", this.source);
-            cmd.Parameters.AddWithValue("@destination", this.destination);
-            cmd.Parameters.AddWithValue("@ipaddress", this.ipaddress);
-            cmd.Parameters.AddWithValue("@route", this.route);
-            cmd.Parameters.AddWithValue("@source1", this.source1);
-            cmd.Parameters.AddWithValue("@destination1", this.destination1);
-            cmd.Parameters.AddWithValue("@ipaddress1", this.ipaddress1);
-            cmd.Parameters.AddWithValue("@route1", this.route1);
-            cmd.Parameters.AddWithValue("@memo", this.memo);
-            cmd.Parameters.AddWithValue("@id", this.id);
-            DB.excuteSql(cmd);
+            if (this.id > 0)
+            {
+                string updateSql = "UPDATE VPN SET vpn_name=@vpn_name, source=@source, destination=@destination, " +
+                        "ipaddress=@ipaddress, route=@route,source1=@source1, destination1=@destination1, " +
+                        "ipaddress1=@ipaddress1, route1=@route1, [memo]=@memo WHERE id=@id";
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.CommandText = updateSql;
+                cmd.Parameters.AddWithValue("@vpn_name", this.vpn_name);
+                cmd.Parameters.AddWithValue("@source", this.source);
+                cmd.Parameters.AddWithValue("@destination", this.destination);
+                cmd.Parameters.AddWithValue("@ipaddress", this.ipaddress);
+                cmd.Parameters.AddWithValue("@route", this.route);
+                cmd.Parameters.AddWithValue("@source1", this.source1);
+                cmd.Parameters.AddWithValue("@destination1", this.destination1);
+                cmd.Parameters.AddWithValue("@ipaddress1", this.ipaddress1);
+                cmd.Parameters.AddWithValue("@route1", this.route1);
+                cmd.Parameters.AddWithValue("@memo", this.memo);
+                cmd.Parameters.AddWithValue("@id", this.id);
+                DB.excuteSql(cmd);
+            }
+            else
+            {
+                string updateSql = "INSERT VPN(vpn_name, source, destination, ipaddress, route, source1, destination1, ipaddress1, route1, [memo])" +
+                                   " VALUES(@vpn_name, @source, @destination, @ipaddress, @route, @source1, @destination1, @ipaddress1, @route1, @memo);";
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.CommandText = updateSql;
+                cmd.Parameters.AddWithValue("@vpn_name", this.vpn_name);
+                cmd.Parameters.AddWithValue("@source", this.source);
+                cmd.Parameters.AddWithValue("@destination", this.destination);
+                cmd.Parameters.AddWithValue("@ipaddress", this.ipaddress);
+                cmd.Parameters.AddWithValue("@route", this.route);
+                cmd.Parameters.AddWithValue("@source1", this.source1);
+                cmd.Parameters.AddWithValue("@destination1", this.destination1);
+                cmd.Parameters.AddWithValue("@ipaddress1", this.ipaddress1);
+                cmd.Parameters.AddWithValue("@route1", this.route1);
+                cmd.Parameters.AddWithValue("@memo", this.memo);
+                DB.excuteSql(cmd);
+            }
             this.is_modified = false;
         }
         public bool validate()

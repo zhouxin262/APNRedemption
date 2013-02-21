@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using Models;
 
 namespace APNRedemption
 {
@@ -16,18 +17,46 @@ namespace APNRedemption
             this.Close();
         }
 
-        public static void ImportScript(string script)
+        private void btn_import_Click(object sender, EventArgs e)
         {
-            string pattern_vpn = @".*?ip vpn-instance (?<vpn_name>.*?)\s*?.*?route-distinguisher (?<vpn_id1>\d+):(?<vpn_id2>\d+)";
+            string script = this.tb_script.Text;
+
+            string pattern_vpn = @".*?ip vpn-instance vpn\.(?<vpn_name>.*?)\s*?.*?route-distinguisher (?<vpn_id1>\d+):(?<vpn_id2>\d+)";
             Regex r = new Regex(pattern_vpn, RegexOptions.Multiline);
             MatchCollection matchCollection = r.Matches(script);
             string test = "";
             foreach (Match m in matchCollection)
             {
-                string vpn_name = m.Groups["vpn_name"].Value;
+                string vpn_name = "vpn." + m.Groups["vpn_name"].Value;
                 string vpn_id1 = m.Groups["vpn_id1"].Value;
                 string vpn_id2 = m.Groups["vpn_id2"].Value;
-                // test += vpn_name + "|" + vpn_id1 + "|" + vpn_id2 + "\n";
+                test += vpn_name + "|" + vpn_id1 + "|" + vpn_id2 + "\n";
+
+                string pattern_interface = @"(?s)interface Tunnel(?<tunnel_id>[\d\/]+)\s+.*?ip binding vpn-instance " + vpn_name + @"(?<interface_section>.*?)interface"; //[\d\/]+\s+.*?ip binding vpn-instance " + vpn_name + @"\s*.*?ip address (?<ip1>[\d\.]+) (?<ip2>[\d\.]+)\s*.*?source (?<source>)";
+                Regex cr = new Regex(pattern_interface, RegexOptions.Multiline);
+                MatchCollection cmatchCollection = cr.Matches(script);
+
+                foreach (Match cm in cmatchCollection)
+                {
+                    string tunnel_id = cm.Groups["tunnel_id"].Value;
+                    string interface_section = cm.Groups["interface_section"].Value;
+                    test += tunnel_id + "\n";
+
+                    string pattern_interface_binding = @"(?s)^\s*?ip address (?<ip1>[\d\.]+) (?<ip2>[\d\.]+)\s*.*?source (?<source>.+?)\s.*?destination (?<destination>.+?)\s";
+                    Regex ccr = new Regex(pattern_interface_binding, RegexOptions.Multiline);
+                    MatchCollection ccmatchCollection = ccr.Matches(interface_section);
+
+                    foreach (Match ccm in ccmatchCollection)
+                    {
+                        string ip1 = ccm.Groups["ip1"].Value;
+                        string ip2 = ccm.Groups["ip2"].Value;
+                        string source = ccm.Groups["source"].Value;
+                        string destination = ccm.Groups["destination"].Value;
+                        test += ip1 + ip2 + source + destination + "\n";
+                    }
+                }
+                this.progressBar1.Value = (this.progressBar1.Value + 1) % 100;
+                Application.DoEvents();
             }
 
             //string pattern_apn = @"apn (?<apn_name>.*?)\s*?.*?vpn-instance (?<vpn_name>.*?)\s*?.*?address-pool (?<address>.*?)\s";
@@ -40,6 +69,8 @@ namespace APNRedemption
                 string vpn_name = m.Groups["vpn_name"].Value;
                 string address_pool = m.Groups["address"].Value;
                 // test += apn_name + "|" + vpn_name + "|" + address_pool + "\n";
+                this.progressBar1.Value = (this.progressBar1.Value + 1) % 100;
+                Application.DoEvents();
             }
 
             string pattern_pool = @"(?s)^\s*?ip pool (?<address>.*?) local .*?vpn-instance (?<vpn_name>.*?)\s+(?<ipsections>(.*?))ip pool";
@@ -60,16 +91,15 @@ namespace APNRedemption
                     string ip1 = cm.Groups["ip1"].Value;
                     string ip2 = cm.Groups["ip2"].Value;
                     string is_static = cm.Groups["static"].Value;
-                    test += section_id + "|" + ip1 + "|" + ip2 + "|" + is_static + "\n";
+                    // test += section_id + "|" + ip1 + "|" + ip2 + "|" + is_static + "\n";
                 }
-
+                this.progressBar1.Value = (this.progressBar1.Value + 1) % 100;
+                Application.DoEvents();
             }
-            MessageBox.Show(test);
-        }
 
-        private void btn_import_Click(object sender, EventArgs e)
-        {
-            ImportScript(tb_script.Text);
+            this.progressBar1.Value = 99;
+            Application.DoEvents();
+            MessageBox.Show(test);
         }
     }
 }

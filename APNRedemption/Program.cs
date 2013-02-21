@@ -16,7 +16,7 @@ namespace APNRedemption
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormAdmin());
+            Application.Run(new FormInputScript());
             
 
             //while (true)
