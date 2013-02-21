@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <LoopBack>
+    <name>LoopBack0</name>
+    <discription>GRE Tunnel 3/0/0</discription>
+    <ipaddress>117.136.17.141/32</ipaddress>
+    <target-board>spu 3 0</target-board>
+    <binding>tunnel gre</binding>
+  </LoopBack>
+  <LoopBack>
+    <name>LoopBack1</name>
+    <discription>GRE Tunnel 3/1/0</discription>
+    <ipaddress>117.136.17.142/32</ipaddress>
+    <target-board>spu 3 1</target-board>
+    <binding>tunnel gre</binding>
+  </LoopBack>
+  <LoopBack>
+    <name>LoopBack2</name>
+    <discription>GRE Tunnel 5/0/0</discription>
+    <ipaddress>117.136.17.143/32</ipaddress>
+    <target-board>spu 5 0</target-board>
+    <binding>tunnel gre</binding>
+  </LoopBack>
+  <LoopBack>
+    <name>LoopBack3</name>
+    <discription>GRE Tunnel 5/0/4</discription>
+    <ipaddress>117.136.17.144/32</ipaddress>
+    <target-board>spu 5 0</target-board>
+    <binding>tunnel gre</binding>
+  </LoopBack>
+</root>
