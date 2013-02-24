@@ -43,6 +43,7 @@
     <Compile Include="ModelAPN.cs" />
     <Compile Include="ModelVPN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ModelLoopBack.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">

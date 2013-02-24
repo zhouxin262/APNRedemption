@@ -19,7 +19,7 @@ namespace DAL
         {
             if (conn.State == ConnectionState.Closed)
             {
-                conn.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source" + AppDomain.CurrentDomain.BaseDirectory  + "=ar.accdb";
+                conn.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + AppDomain.CurrentDomain.BaseDirectory + "ar.accdb";
                 comm.Connection = conn;
                 try
                 {
