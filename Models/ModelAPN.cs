@@ -35,24 +35,48 @@ namespace Models
 
         public void save()
         {
-            string updateSql = "UPDATE APN SET apn_name=@apn_name, sim_ip=@sim_ip, is_static=@is_static, serverip=@serverip, " +
+            if (this.id > 0)
+            {
+                string updateSql = "UPDATE APN SET apn_name=@apn_name, sim_ip=@sim_ip, is_static=@is_static, serverip=@serverip, " +
                     "ggsn=@ggsn, vpn1_id=@vpn1_id, vpn2_id=@vpn2_id, contact=@contact, ggsn_gnif=@ggsn_gnif, " +
                     "tunnel_name=@tunnel_name, [memo]=@memo WHERE id=@id";
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.CommandText = updateSql;
-            cmd.Parameters.AddWithValue("@apn_name", this.apn_name);
-            cmd.Parameters.AddWithValue("@sim_ip", this.sim_ip);
-            cmd.Parameters.AddWithValue("@is_static", this.is_static);
-            cmd.Parameters.AddWithValue("@serverip", this.serverip);
-            cmd.Parameters.AddWithValue("@ggsn", this.ggsn);
-            cmd.Parameters.AddWithValue("@vpn1_id", this.vpn1_id);
-            cmd.Parameters.AddWithValue("@vpn2_id", this.vpn2_id);
-            cmd.Parameters.AddWithValue("@contact", this.contact);
-            cmd.Parameters.AddWithValue("@ggsn_gnif", this.ggsn_gnif);
-            cmd.Parameters.AddWithValue("@tunnel_name", this.tunnel_name);
-            cmd.Parameters.AddWithValue("@memo", this.memo);
-            cmd.Parameters.AddWithValue("@id", this.id);
-            DB.excuteSql(cmd);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.CommandText = updateSql;
+                cmd.Parameters.AddWithValue("@apn_name", this.apn_name);
+                cmd.Parameters.AddWithValue("@sim_ip", this.sim_ip);
+                cmd.Parameters.AddWithValue("@is_static", this.is_static);
+                cmd.Parameters.AddWithValue("@serverip", this.serverip);
+                cmd.Parameters.AddWithValue("@ggsn", this.ggsn);
+                cmd.Parameters.AddWithValue("@vpn1_id", this.vpn1_id);
+                cmd.Parameters.AddWithValue("@vpn2_id", this.vpn2_id);
+                cmd.Parameters.AddWithValue("@contact", this.contact);
+                cmd.Parameters.AddWithValue("@ggsn_gnif", this.ggsn_gnif);
+                cmd.Parameters.AddWithValue("@tunnel_name", this.tunnel_name);
+                cmd.Parameters.AddWithValue("@memo", this.memo);
+                cmd.Parameters.AddWithValue("@id", this.id);
+                DB.excuteSql(cmd);
+            }
+            else
+            {
+                string insertSql = "INSERT INTO APN(apn_name, sim_ip, is_static, serverip, ggsn, vpn1_id, vpn2_id, contact, ggsn_gnif, tunnel_name, [memo])" +
+                " VALUES(@apn_name, @sim_ip, @is_static, @serverip, @ggsn, @vpn1_id, @vpn2_id, @contact, @ggsn_gnif, @tunnel_name, [memo])";
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.CommandText = insertSql;
+                cmd.Parameters.AddWithValue("@apn_name", this.apn_name);
+                cmd.Parameters.AddWithValue("@sim_ip", this.sim_ip);
+                cmd.Parameters.AddWithValue("@is_static", this.is_static);
+                cmd.Parameters.AddWithValue("@serverip", this.serverip);
+                cmd.Parameters.AddWithValue("@ggsn", this.ggsn);
+                cmd.Parameters.AddWithValue("@vpn1_id", this.vpn1_id);
+                cmd.Parameters.AddWithValue("@vpn2_id", this.vpn2_id);
+                cmd.Parameters.AddWithValue("@contact", this.contact);
+                cmd.Parameters.AddWithValue("@ggsn_gnif", this.ggsn_gnif);
+                cmd.Parameters.AddWithValue("@tunnel_name", this.tunnel_name);
+                cmd.Parameters.AddWithValue("@memo", this.memo);
+                DB.excuteSql(cmd);
+
+            }
+                       
             this.is_modified = false;
         }
         public void delete()
@@ -166,6 +190,12 @@ namespace Models
             }
             return null;
         }
+        public VPN set_vpn_by_name(string vpn_name)
+        {
+            VPN v = ModelVPN.GetByName(vpn_name);
+            this.vpn1_id = v.id; 
+            return v;
+        }
     }
     public class ModelAPN
     {
@@ -198,6 +228,27 @@ namespace Models
                 a.vpn1.validate();
             }
             a.is_modified = false;
+            return a;
+        }
+        public static void truncate()
+        {
+            string sqlStr = "DELETE FROM APN";
+            DB.excuteSql(sqlStr);
+        }
+        public static APN create_new(string apn_name)
+        {
+            APN a = new APN();
+            a.apn_name = apn_name;
+            a.sim_ip = "";
+            a.is_static = "";
+            a.serverip = "";
+            a.ggsn = "";
+            a.vpn1_id = 0;
+            a.vpn2_id = 0;
+            a.contact = "";
+            a.ggsn_gnif = "";
+            a.tunnel_name = "";
+            a.memo = "";
             return a;
         }
     }

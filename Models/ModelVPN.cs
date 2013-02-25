@@ -19,6 +19,7 @@ namespace Models
         public string ipaddress1 { get; set; }
         public string route1 { get; set; }
         public string memo { get; set; }
+        public string distinction { get; set; }
 
         // no db
         public bool is_modified { get; set; }
@@ -43,7 +44,7 @@ namespace Models
             {
                 string updateSql = "UPDATE VPN SET vpn_name=@vpn_name, source=@source, destination=@destination, " +
                         "ipaddress=@ipaddress, route=@route,source1=@source1, destination1=@destination1, " +
-                        "ipaddress1=@ipaddress1, route1=@route1, [memo]=@memo WHERE id=@id";
+                        "ipaddress1=@ipaddress1, route1=@route1, [memo]=@memo, distinction=@distinction WHERE id=@id";
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.CommandText = updateSql;
                 cmd.Parameters.AddWithValue("@vpn_name", this.vpn_name);
@@ -57,12 +58,13 @@ namespace Models
                 cmd.Parameters.AddWithValue("@route1", this.route1);
                 cmd.Parameters.AddWithValue("@memo", this.memo);
                 cmd.Parameters.AddWithValue("@id", this.id);
+                cmd.Parameters.AddWithValue("@distinction", this.distinction);
                 DB.excuteSql(cmd);
             }
             else
             {
-                string updateSql = "INSERT VPN(vpn_name, source, destination, ipaddress, route, source1, destination1, ipaddress1, route1, [memo])" +
-                                   " VALUES(@vpn_name, @source, @destination, @ipaddress, @route, @source1, @destination1, @ipaddress1, @route1, @memo);";
+                string updateSql = "INSERT INTO VPN(vpn_name, source, destination, ipaddress, route, source1, destination1, ipaddress1, route1, [memo], distinction)" +
+                                   " VALUES(@vpn_name, @source, @destination, @ipaddress, @route, @source1, @destination1, @ipaddress1, @route1, @memo, @distinction);";
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.CommandText = updateSql;
                 cmd.Parameters.AddWithValue("@vpn_name", this.vpn_name);
@@ -75,6 +77,7 @@ namespace Models
                 cmd.Parameters.AddWithValue("@ipaddress1", this.ipaddress1);
                 cmd.Parameters.AddWithValue("@route1", this.route1);
                 cmd.Parameters.AddWithValue("@memo", this.memo);
+                cmd.Parameters.AddWithValue("@distinction", this.distinction);
                 DB.excuteSql(cmd);
             }
             this.is_modified = false;
@@ -248,6 +251,11 @@ namespace Models
     }
     public class ModelVPN
     {
+        public static void truncate()
+        {
+            string sqlStr = "DELETE FROM VPN";
+            DB.excuteSql(sqlStr);
+        }
         public static VPN Get(int id)
         {
             VPN a = new VPN();
@@ -270,6 +278,45 @@ namespace Models
             dr.Close();
             a.is_modified = false;
             return a;
+        }
+        public static VPN GetByName(string vpn_name)
+        {
+            VPN a = new VPN();
+            string sqlStr = "SELECT * FROM [VPN] WHERE vpn_name='" + vpn_name + "'";
+            OleDbDataReader dr = DB.dataReader(sqlStr);
+            if (dr.Read())
+            {
+                a.id = int.Parse(dr["id"].ToString());
+                a.vpn_name = dr["vpn_name"].ToString();
+                a.source = dr["source"].ToString();
+                a.destination = dr["destination"].ToString();
+                a.ipaddress = dr["ipaddress"].ToString();
+                a.route = dr["route"].ToString();
+                a.source1 = dr["source1"].ToString();
+                a.destination1 = dr["destination1"].ToString();
+                a.ipaddress1 = dr["ipaddress1"].ToString();
+                a.route1 = dr["route1"].ToString();
+                a.memo = dr["memo"].ToString();
+            }
+            dr.Close();
+            a.is_modified = false;
+            return a;
+        }
+        public static VPN create_new(string vpn_name, string vpn_id)
+        {
+            VPN v = new VPN();
+            v.vpn_name = vpn_name;
+            v.distinction = vpn_id;
+            v.ipaddress = "";
+            v.source = "";
+            v.destination = "";
+            v.route = ""; 
+            v.ipaddress1 = "";
+            v.source1 = "";
+            v.destination1 = "";
+            v.route1 = "";
+            v.memo = ""; 
+            return v;
         }
     }
 
